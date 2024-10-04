@@ -27,7 +27,7 @@ urlpatterns= [
     path('carrito/vaciar/', views.vaciar_carrito, name='vaciar_carrito'),
     path('carrito/actualizar/<int:producto_id>/', views.actualizar_cantidad_carrito, name='actualizar_cantidad_carrito'),
     path('api/productos/', views.productos_api, name='productos_api'),
-    
+    path('categorias-juegos/', views.listar_categorias_juegos, name='listar_categorias_juegos'),
 ]
 
 

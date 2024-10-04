@@ -18,11 +18,23 @@ body {
     overflow-x: hidden;
 }
 
-/* Estilos del encabezado */
 header {
     background: var(--background);
-    padding: 15px 20px;
+    padding: 0 20px;
     border-bottom: 2px solid #A5D8FF;
+}
+
+form {
+    color: #f4f4f4;
+    font-size: 17px;
+}
+
+footer {
+    background: var(--background);
+    color: #f4f4f4;
+    padding: 15px;
+    text-align: center;
+    border-top: 2px solid #A5D8FF;
 }
 
 .navbar {
@@ -36,54 +48,47 @@ header {
     height: auto;
 }
 
-/* Navbar Links */
 .nav-link {
-    color: #f4f4f4;
-    text-decoration: none;
-    font-size: 16px;
+    background: radial-gradient(
+    circle at 100%,
+    #d3a4ff,
+    #7dc7ff 30%,
+    #887dff 60%,
+    #dbb5ff 90%
+    );
+    margin-left: 10px;
+    margin-right: 10px;
     font-weight: 600;
-    margin-left: 5px;
-    padding: 10px 25px !important;
-    border-radius: 5px;
-    text-align: center;
     border: none;
-    background: linear-gradient(135deg, #c281ff, #7dc7ff, #bf7dfe);
+    background-size: 200% auto;
+    color: #000;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: animatedTextGradient 1.5s linear infinite;
+}
+
+.button-primary {
+    background: linear-gradient(135deg, #c281ff, #5ab1f3, #bf7dfe);
     background-size: 200% 200%;
     animation: iridescent 1.5s ease infinite;
 }
-.nav-link:hover {
-    color: #f4f4f4;
-}
 
-.registrate {
-    background: linear-gradient(135deg, #c281ff, #7dc7ff, #bf7dfe);
+.button-warning {
+    background: linear-gradient(135deg, #da8c32, #dabd39, #95c328);
     background-size: 200% 200%;
     animation: iridescent 1.5s ease infinite;
 }
 
-.registrate:hover {
-    color: #FFFFFF;
-}
-
-/* Estilo del botón "Todas las Categorías" */
-.all-categories {
-    color: #f4f4f4;
-    font-size: 16px;
-    font-weight: 600;
-    text-align: center;
-    padding: 15px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #c281ff, #7dc7ff, #bf7dfe);
+.button-danger {
+    background: linear-gradient(135deg, #c85341, #cc3a3a, #a32457);
     background-size: 200% 200%;
     animation: iridescent 1.5s ease infinite;
-    text-decoration: none;
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
 }
 
-.all-categories:hover {
-    color: #ffffff;
-    background-color: var(--background); /* Fondo oscuro al pasar el cursor */
-    transform: scale(1.05);
+.button-success {
+    background: linear-gradient(135deg, #41adc8, #3a6bcc, #2433a3);
+    background-size: 200% 200%;
+    animation: iridescent 1.5s ease infinite;
 }
 
 /* Estilos del sidebar */
@@ -132,14 +137,12 @@ header {
     background-color: var(--background);
 }
 
-/* Estilos del área principal */
 .main-content {
     flex: 1;
     padding: 20px;
     background-color: var(--background);
 }
 
-/* Estilos de la barra de búsqueda */
 .search-bar {
     display: flex;
     margin-bottom: 20px;
@@ -174,14 +177,6 @@ header {
 .search-bar button:hover {
     color: #ffffff;
     background-color: var(--background);
-}
-
-/* Estilos de la rejilla de juegos */
-.game-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 25px;
-    padding-top: 15px;
 }
 
 .game-card {
@@ -222,9 +217,13 @@ header {
     animation: iridescent 1.5s ease infinite;
 }
 
-.categoria-descripcion {
-    text-align: justify;
-    text-justify: inter-word;
+/* Ajuste del tamaño de la imagen del juego */
+.game-description img {
+    width: 100%;
+    display: flex;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Animación del gradiente iridiscente */
@@ -240,89 +239,8 @@ header {
     }
 }
 
-/* Estilos del pie de página */
-footer {
-    background: var(--background);
-    color: #f4f4f4;
-    padding: 15px;
-    text-align: center;
-    border-top: 2px solid #A5D8FF;
-}
-
-.container-registro {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #ffffff; /* Color del texto (blanco) */
-}
-
-form {
-    color: #bac1ff;
-    font-size: 17px;
-}
-
-.registro-title {
-    text-align: center;
-    width: 850px;
-    padding: 10px;
-    border: 4px solid;
-    border-image: linear-gradient(45deg, #D4A5FF, #A5D8FF, #D4A5FF) 1;
-    display: inline-block;
-    background-color: transparent;
-    border-radius: 8px; /* Opcional: Bordes redondeados */
-}
-
-/* Ajuste del tamaño de la imagen del juego */
-.game-description img {
-    width: 100%;
-    display: flex;
-    height: auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.container-full {
-    width: 100%;
-    display: flex;
-    flex: 1;
-    margin-left: 20px;
-    margin-right: 20px;
-}
-
-/* Estilo del texto descriptivo del juego */
-.description-text {
-    font-size: 18px;
-    line-height: 1.6;
-    color: #f4f4f4;
-    margin-bottom: 20px;
-}
-
-/* Estilo del botón "Comprar" */
-.btn-outline-primary {
-    color: #f4f4f4;
-    border: 4px solid;
-    background-color: transparent;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-}
-
-.btn-outline-primary:hover {
-    background-color: #2d2d2e;
-    color: #121115;
-    transform: scale(1.05);
-}
-
-.flex-end {
-    justify-content: flex-end;
-}
-
-.game-card-all-games:hover {
-    background: linear-gradient(135deg, #380964, #155995, #8531d4);
-    background-size: 200% 200%;
-    animation: iridescent 1.5s ease infinite;
-}
-
-.flex-direction-row {
-    flex-direction: row;
+@keyframes animatedTextGradient {
+    to {
+      background-position: 200% center;
+    }
 }

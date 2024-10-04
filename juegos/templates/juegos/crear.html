@@ -3,14 +3,13 @@
 {% block title %}Crear Producto{% endblock %}
 
 {% block content %}
-<div class="container">
-<h2 class="my-4">Crear Producto</h2>
-
-<form method="POST" class="mb-3">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-success">Guardar</button>
-    <a href="{% url 'listar_productos' %}" class="btn btn-link btn-secondary">Cancelar</a>
-</form>
+<div class="mt-4 mb-5">
+    <h2 class="my-4">Crear Producto</h2>
+    <form method="POST" class="mb-3">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-dark button-primary">Guardar</button>
+        <a href="{% url 'listar_productos' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
 </div>
 {% endblock %}

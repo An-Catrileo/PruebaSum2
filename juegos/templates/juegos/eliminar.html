@@ -3,13 +3,13 @@
 {% block title %}Eliminar Producto{% endblock %}
 
 {% block content %}
-<div class="container">
-<h1>Eliminar Producto</h1>
-<p>Estás seguro de querer eliminar "{{ producto.nombre }}"?</p>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Eliminar</button>
-    <a href="{% url 'listar_productos' %}" class="btn btn-secondary">Cancelar</a>
-</form>
+<div class="mt-4 mb-5">
+    <h2 class="mb-3">Eliminar Categoria</h2>
+    <p>Estás seguro de querer eliminar "{{ producto.nombre }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'listar_productos' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
 </div>
 {% endblock %}

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-    <main class="container-full row">
+    <main class="row">
         <aside class="sidebar col-2">
             <a href="#categorias" class="sidebar-link">Categorías</a>
             <ul class="lista">
@@ -19,15 +19,17 @@
                     </div>
                 </form>
 
-            <div class="game-grid">
+            <div class="row justify-content-center">
                 {% for juego in juegos %}
-                    <a href="{% url 'detalle_juego' juego.pk %}" class="game-card-link">
-                        <div class="game-card">
-                            <img src="{{ juego.url_imagen }}" alt="{{ juego.nombre }}">
-                            <h3>{{ juego.nombre }}</h3>
-                            <p>{{ juego.precio }} CLP</p>
-                        </div>
-                    </a>
+                    <div class="col-lg-4 col-md-6 col-sm-8 col-12">
+                        <a href="{% url 'detalle_juego' juego.id %}" class="game-card-link">
+                            <div class="game-card">
+                                <img src="{{ juego.thumbnail }}" alt="The Forest">
+                                <h3>{{ juego.title }}</h3>
+                                <p>{{ juego.precio }} CLP</p>
+                            </div>
+                        </a>
+                    </div>
                 {% endfor %}
             </div>
         </section>

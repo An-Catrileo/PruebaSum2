@@ -19,20 +19,27 @@ import requests
 from django.shortcuts import render
 from django.core.cache import cache
 from django.shortcuts import redirect
+import random
 
 class CustomLoginView(LoginView):
     template_name = 'juegos/login.html'
 
 def detalle_juego(request, pk):
-    juego=get_object_or_404(Producto, pk=pk)
-    juego.precio = f"{juego.precio:,.0f}".replace(',', '.')
+    url = f"https://www.freetogame.com/api/game?id={pk}"
+    response = requests.get(url) #realizar solicitud Get a la Api
+    juego = response.json()  #convertir la respuesta a formato Json
+    numero_aleatorio = random.randint(10000, 59990)
+    juego['precio'] = "{:,}".format(numero_aleatorio).replace(",", ".")
     return render(request, 'juegos/detalle_juego.html', {'juego': juego})
 
 def detalle_categoria(request, pk):
     categoria=get_object_or_404(Categoria, pk=pk)
-    juegos = Producto.objects.filter(categoria=categoria)
+    url = f"https://www.freetogame.com/api/games?category={categoria.nombre}"
+    response = requests.get(url) #realizar solicitud Get a la Api
+    juegos = response.json()  #convertir la respuesta a formato Json
     for juego in juegos:
-        juego.precio = f"{juego.precio:,.0f}".replace(',', '.')
+        numero_aleatorio = random.randint(10000, 59990)
+        juego['precio'] = "{:,}".format(numero_aleatorio).replace(",", ".")
     return render(request, 'juegos/detalle_categoria.html', {'categoria': categoria, 'juegos': juegos})
 
 @login_required
@@ -45,14 +52,22 @@ def home(request):
 
 def index(request):
     query = request.GET.get('q')
+    url = "https://www.freetogame.com/api/games"
+    response = requests.get(url)  # Realizar solicitud GET a la API
+    juegos = response.json()  # Convertir la respuesta a formato JSON
+
     if query:
-        juegos = Producto.objects.filter(nombre__icontains=query)
+        # Filtrar juegos por título que contenga la query, ignorando mayúsculas y minúsculas
+        juegos_filtrados = [juego for juego in juegos if query.lower() in juego['title'].lower()]
     else:
-        juegos = Producto.objects.all()
+        juegos_filtrados = juegos[:12]  # Limitar a 12 juegos si no hay query
+
     categorias = Categoria.objects.all()
-    for juego in juegos:
-        juego.precio = f"{juego.precio:,.0f}".replace(',', '.')
-    return render(request, 'juegos/index.html', {'juegos': juegos, 'categorias': categorias})
+    for juego in juegos_filtrados:
+        numero_aleatorio = random.randint(10000, 59990)
+        juego['precio'] = "{:,}".format(numero_aleatorio).replace(",", ".")  # Agregar clave 'precio' a cada juego
+
+    return render(request, 'juegos/index.html', {'juegos': juegos_filtrados, 'categorias': categorias})
 
 def vista_protegida(request):
     return render(request, 'juegos/protegida.html')
@@ -63,7 +78,7 @@ def vista_protegida(request):
 
 @login_required
 def listar_productos(request):
-    productos = Producto.objects.all()
+    productos = Categoria.objects.all()
     return render(request, 'juegos/listar.html', {'productos': productos})
 
 @login_required
@@ -79,7 +94,7 @@ def crear_producto(request):
 
 @login_required
 def editar_producto(request, pk):
-    producto=get_object_or_404(Producto, pk=pk)
+    producto=get_object_or_404(Categoria, pk=pk)
     if request.method == 'POST':
         form = ProductoForm(request.POST, instance=producto)
         if form.is_valid():
@@ -91,7 +106,7 @@ def editar_producto(request, pk):
     
 @login_required
 def eliminar_producto(request, pk):
-    producto = get_object_or_404(Producto, pk=pk)
+    producto = get_object_or_404(Categoria, pk=pk)
     if request.method == 'POST':
         producto.delete()
         return redirect('listar_productos')
@@ -129,7 +144,11 @@ def perfil_usuario(request):
 
 def agregar_al_carrito(request, producto_id):
     # Obtener el producto o devolver un error 404 si no existe
-    producto = get_object_or_404(Producto, id=producto_id)
+    url = f"https://www.freetogame.com/api/game?id={producto_id}"
+    response = requests.get(url) #realizar solicitud Get a la Api
+    producto = response.json()  #convertir la respuesta a formato Json
+    numero_aleatorio = random.randint(10000, 59990)
+    producto['precio'] = "{:,}".format(numero_aleatorio).replace(",", ".")
     
     # Obtener el carrito de la sesión, si no existe, inicializarlo como un diccionario vacío
     carrito = request.session.get('carrito', {})
@@ -140,8 +159,8 @@ def agregar_al_carrito(request, producto_id):
     else:
         # Agregar el producto al carrito con la cantidad inicial de 1
         carrito[producto_id] = {
-            'nombre': producto.nombre,
-            'precio': float(producto.precio),  # Convertimos a float para evitar problemas de JSON
+            'nombre': producto['title'],
+            'precio': float(producto['precio']),  # Convertimos a float para evitar problemas de JSON
             'cantidad': 1,
         }
     
@@ -209,3 +228,14 @@ def productos_api(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+def listar_categorias_juegos(request):
+    url = "https://www.freetogame.com/api/games"
+    response = requests.get(url) #realizar solicitud Get a la Api
+    data = response.json()  #convertir la respuesta a formato Json
+    
+    categorias = data['categories'] #Obtener categorias o generos de los juegos
+    
+    return render (request, 'juegos/listar_categorias_juegos.html',{'categorias': categorias})
+

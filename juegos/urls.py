@@ -1,7 +1,18 @@
-from django.urls import path
+from django.urls import path, include
 from.import views
 from django.contrib.auth import views as auth_views
 from .views import CustomLoginView
+from rest_framework.routers import DefaultRouter
+from .views import ProductoViewSet
+
+from rest_framework_simplejwt.views import(
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
+#creamos un router que se encargara de las rutas de los viewsets
+router = DefaultRouter()
+router.register(r'productos', ProductoViewSet) #Registrar el viewset de producto
 
 
 urlpatterns= [
@@ -27,7 +38,11 @@ urlpatterns= [
     path('carrito/vaciar/', views.vaciar_carrito, name='vaciar_carrito'),
     path('carrito/actualizar/<int:producto_id>/', views.actualizar_cantidad_carrito, name='actualizar_cantidad_carrito'),
     path('api/productos/', views.productos_api, name='productos_api'),
+    path('api/productos/int:pk/', views.productos_api, name='producto_detalle'),
     path('categorias-juegos/', views.listar_categorias_juegos, name='listar_categorias_juegos'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/', include(router.urls)), #incluir las rutas del router en la URL base 'api/'
 ]
 
 

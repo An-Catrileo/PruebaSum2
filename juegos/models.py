@@ -22,12 +22,3 @@ class Producto(models.Model):
         return self.nombre
     
 
-class Pedido(models.Model):
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    cantidad = models.IntegerField(default=1)
-    fecha = models.DateTimeField(auto_now_add=True)
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"Pedido {self.id} - {self.producto.nombre} por {self.usuario.username}"
-    

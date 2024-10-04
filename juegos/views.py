@@ -8,28 +8,29 @@ from django.contrib.auth.models import User
 from .models import Producto, Categoria
 from .forms import ProductoForm
 from django.http import HttpResponse
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-from .models import Producto
 from .serializers import ProductoSerializer
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import permission_classes
 import requests
-from django.shortcuts import render
 from django.core.cache import cache
-from django.shortcuts import redirect
+from django.urls import reverse_lazy
 import random
+
+
 
 class CustomLoginView(LoginView):
     template_name = 'juegos/login.html'
 
 def detalle_juego(request, pk):
+    #juego = cache.get("detalle_juego")
     url = f"https://www.freetogame.com/api/game?id={pk}"
     response = requests.get(url) #realizar solicitud Get a la Api
     juego = response.json()  #convertir la respuesta a formato Json
     numero_aleatorio = random.randint(10000, 59990)
     juego['precio'] = "{:,}".format(numero_aleatorio).replace(",", ".")
+    #cache.set("detalle_juego", juego, timeout = 60*60)
     return render(request, 'juegos/detalle_juego.html', {'juego': juego})
 
 def detalle_categoria(request, pk):
@@ -40,7 +41,21 @@ def detalle_categoria(request, pk):
     for juego in juegos:
         numero_aleatorio = random.randint(10000, 59990)
         juego['precio'] = "{:,}".format(numero_aleatorio).replace(",", ".")
+        
+    #paginator = Paginator(juego, 6)
+    #page_number = request.GET.get('page')
+    #page_obj = paginator.get_page(page_number)
+    
     return render(request, 'juegos/detalle_categoria.html', {'categoria': categoria, 'juegos': juegos})
+
+
+# ViewSet para el modelo Producto
+class ProductoViewSet(viewsets.ModelViewSet):
+    queryset = Producto.objects.all()  # Recuperar todos los productos de la base de datos
+    serializer_class = ProductoSerializer  # Usar el serializador definido para Producto
+    permission_classes = [IsAuthenticated]  # Requiere que el usuario esté autenticado para acceder
+
+
 
 @login_required
 def home(request):
@@ -214,20 +229,42 @@ def actualizar_cantidad_carrito(request, producto_id):
         
     return redirect('ver_carrito')
 
-@api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated]) #Requiere autenticación
-def productos_api(request):
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])  # Requiere que el usuario esté autenticado
+def productos_api(request, pk=None):
+    # GET - Listar productos o obtener uno en específico
     if request.method == 'GET':
-        productos = Producto.objects.all()
-        serializer = ProductoSerializer(productos, many=True)
+        if pk:
+            producto = get_object_or_404(Producto, pk=pk)
+            serializer = ProductoSerializer(producto)
+        else:
+            productos = Producto.objects.all()
+            serializer = ProductoSerializer(productos, many=True)
         return Response(serializer.data)
     
-    if request.method == 'POST':
+    # POST - Crear un nuevo producto
+    elif request.method == 'POST':
         serializer = ProductoSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    # PUT - Actualizar un producto existente
+    elif request.method == 'PUT':
+        producto = get_object_or_404(Producto, pk=pk)
+        serializer = ProductoSerializer(producto, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    # DELETE - Eliminar un producto
+    elif request.method == 'DELETE':
+        producto = get_object_or_404(Producto, pk=pk)
+        producto.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 
 def listar_categorias_juegos(request):
@@ -238,4 +275,9 @@ def listar_categorias_juegos(request):
     categorias = data['categories'] #Obtener categorias o generos de los juegos
     
     return render (request, 'juegos/listar_categorias_juegos.html',{'categorias': categorias})
+
+
+
+
+
 

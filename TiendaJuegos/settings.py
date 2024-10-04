@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'juegos',
     'rest_framework',
+    'rest_framework_simplejwt'
 ]
 
 CACHES = {
@@ -54,7 +55,22 @@ CACHES = {
     }
 }
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTENTICATION_CLASES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        ],
+    'DEFAULT_PERMISSION_CLASSES':[
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}
 
+#configuracion opcional de SimpleJWT para ajustar la duracion del token
+from datetime import timedelta
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30), #Duracion del token de acceso
+    'REFRESH_TOKEN_LIFETIME': timedelta(days= 1),#duracion del token de refresco
+    'AUTH_HEADER_TYPES': ('bearer',),   
+}
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
